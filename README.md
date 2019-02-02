@@ -1,4 +1,4 @@
-# dotfiles
+# config
 
 This repository contains my personal configuration for
 

@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: org-babel inline plantuml source
+# key: orgp
+# --
+
+#+BEGIN_SRC plantuml :file $1.svg
+skinparam monochrome reverse
+skinparam ClassBackgroundColor Lime
+skinparam ParticipantBackgroundColor Lime    
+skinparam SequenceLifeLineBackgroundColor Lime
+skinparam NoteBackgroundColor GreenYellow
+$0
+#+END_SRC

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: class declaration
+# key: class
+# --
+class ${1:<classname>}
+{
+public:
+
+private:
+};

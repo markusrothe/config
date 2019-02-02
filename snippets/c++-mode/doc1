@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: documentation
+# key: doc1
+# --
+//! $0
+//! \param $1 $2
+//! \return $3

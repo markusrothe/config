@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: org-babel inline c++ source
+# key: orgc
+# --
+#+BEGIN_SRC c++
+
+#+END_SRC

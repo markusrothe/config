@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: org-babel inline sh source
+# key: orgsh
+# --
+#+BEGIN_SRC sh
+
+#+END_SRC

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: include_guard
+# key: #ifn
+# --
+#ifndef $1_h
+#define $1_h
+
+#endif // $1_h

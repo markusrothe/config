@@ -3,8 +3,8 @@ Some config items are taken from https://raw.githubusercontent.com/jamiecollinso
 * Setup
 ** Configure package sources
 
-Add repositories from which we'll load packages. I prefer to live on the bleeding edge so have only enabled melpa. Setting =package-enable-at-startup= to =nil= prevents a second package load and slightly improves startup time.
- 
+Add MELPA as a package repository.
+
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
   (setq package-enable-at-startup nil)
@@ -33,28 +33,26 @@ This is equivalent to setting =:ensure t= on each call to =use-package=
   (defun find-config ()
     "Edit config.org"
     (interactive)
-    (find-file "~/dotfiles/emacs/config.org"))
+    (find-file "~/config/emacs/config.org"))
 
   (global-set-key (kbd "C-c I") 'find-config)
 #+END_SRC
 
 ** Set custom settings to load in own file
 
-This stops emacs adding customised settings to =init.el=.
-Avoid using customize anyway, preferring programmatic control of variables.
-Creating it as a temporary file effectively disables it (i.e. any changes are session local).
+Stop emacs from adding settings to init.el by making the customize-file a temporary file
 
 #+BEGIN_SRC emacs-lisp
   (setq custom-file (make-temp-file "emacs-custom"))
 #+END_SRC
 * Preferences
-** Don't display the help screen on startup.
+** Don't display the help screen on startup
 
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
 #+END_SRC
 
-** Turn off unwanted window decoration.
+** Turn off unwanted window decorations
 
 #+BEGIN_SRC emacs-lisp
   (tool-bar-mode -1)
@@ -76,7 +74,7 @@ Creating it as a temporary file effectively disables it (i.e. any changes are se
 
 ** Backup file creation options
 
-A common frustration with new Emacs users is the =filename#= files created. This centralises the backup files created as you edit.
+Move all backup files into a common central location
 
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
@@ -93,7 +91,8 @@ A common frustration with new Emacs users is the =filename#= files created. This
 #+END_SRC
 * Interface
 ** Command completion
-=ivy= is a generic completion framework which uses the minibuffer. Turning on =ivy-mode= enables replacement of lots of built in =ido= functionality.
+
+Use =ivy= as a completion framework for the minibuffer.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
@@ -102,13 +101,14 @@ A common frustration with new Emacs users is the =filename#= files created. This
       (ivy-mode t))
 #+END_SRC
 
-By default =ivy= starts filters with =^=. I don't normally want that and can easily type it manually when I do.
+Disable ivy default filter start.
 
 #+BEGIN_SRC emacs-lisp
   (setq ivy-initial-inputs-alist nil)
 #+END_SRC
 
 ** Better searching
+
 Use ag for searches
 #+BEGIN_SRC emacs-lisp
   (use-package ag)
@@ -129,19 +129,32 @@ Use counsel-ag for fast grep inside a project
     (global-set-key (kbd "C-c k") 'counsel-ag))
 #+END_SRC
 
-** Dired mode
+Use avy for characteavr based searches in a file.
 #+BEGIN_SRC emacs-lisp
-      (setq dired-dwim-target t)
-      (use-package dired-rainbow)
-      (use-package dired-hacks-utils)
-      (use-package dired-collapse
-        :config
-        (add-hook 'dired-mode-hook 'dired-collapse-mode)
-        )
+  (use-package avy
+    :config
+    :bind("M-s" . avy-goto-char))
 #+END_SRC
+
+** Dired mode
+
+Use =dired-rainbow= for more colors in dired buffers.
+=dired-hacks-utils= is a common set of functions for dired-enhancing tools.
+=dired-collaps= collapses folders together that only contain more subfolders.
+
+#+BEGIN_SRC emacs-lisp
+  (setq dired-dwim-target t)
+  (use-package dired-rainbow)
+  (use-package dired-hacks-utils)
+  (use-package dired-collapse
+    :config
+    (add-hook 'dired-mode-hook 'dired-collapse-mode)
+    )
+#+END_SRC
+
 * Appearance
 
-I'm now using my own translation of Panda Theme
+Use the zenburn color theme
 
 #+BEGIN_SRC emacs-lisp
   (use-package zenburn-theme
@@ -189,7 +202,7 @@ Highlight strings which represent colours. I only want this in programming modes
     (add-hook 'prog-mode-hook 'rainbow-mode))
 #+END_SRC
 
-Keep things indented correctly for me.
+Keep things indented correctly.
 
 #+BEGIN_SRC emacs-lisp
   (use-package aggressive-indent)
@@ -236,7 +249,7 @@ Set Keybinding for finding files in a project and switching between related file
 #+END_SRC
 
 ** Git
-Magit is an awesome interface to git. Summon it with `C-x g`.
+Use magit as a frontend for git. =C-x g= to open it.
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit
@@ -295,20 +308,17 @@ TimeMachine lets us step through the history of a file as recorded in git.
 
 ** Autocomplete
 
-Company mode provides good autocomplete options. Perhaps I should add company-quickhelp for documentation (https://github.com/expez/company-quickhelp)?
-
-It would also be good to improve integration with yasnippet as I don't feel I'm making the best use there.
+Company mode provides good autocomplete options.
 
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :diminish
     :config
     (add-hook 'after-init-hook 'global-company-mode)
-
     (setq company-idle-delay t))
 #+END_SRC
 
-I don't want suggestions from open files / buffers to be automatically lowercased as these are often camelcase function names.
+Disable automatic lower case of completions
 
 #+BEGIN_SRC emacs-lisp
   (setq company-dabbrev-downcase nil)
@@ -321,11 +331,7 @@ Remove default company backends -> We only want the ones we need and we configur
 #+END_SRC
 ** Snippets
 
-Unlike autocomplete which suggests words / symbols, snippets are pre-prepared templates which you fill in.
-
-I'm using a community library (=[[https://github.com/AndreaCrotti/yasnippet-snippets]]=) with *lots* of ready made options, and have my own directory of custom snippets I've added. Not sure if I should unify these by forking =yasnippet-snippets=.
-
-Type the shortcut and press =TAB= to complete, or =M-/= to autosuggest a snippet.
+Use yasnippet for test-snippets and their completion when pressing =TAB=
 
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
@@ -333,13 +339,11 @@ Type the shortcut and press =TAB= to complete, or =M-/= to autosuggest a snippet
       :config
       (add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippet-snippets")
       (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
-      (add-to-list 'yas-snippet-dirs "~/dotfiles/snippets")
+      (add-to-list 'yas-snippet-dirs "~/config/snippets")
       (yas-global-mode)
       (global-set-key (kbd "M-/") 'company-yasnippet))
 #+END_SRC
 ** Markdown
-
-Markdown support isn't built into Emacs, add it with =markdown-mode=.
 
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
@@ -350,7 +354,7 @@ Markdown support isn't built into Emacs, add it with =markdown-mode=.
     :init (setq markdown-command "multimarkdown"))
 #+END_SRC
 ** C
-Emacs has a great built in C/C++ mode, but we can improve on it with =irony-mode= for code completion via =libclang=.
+Use =irony-mode= for C++ completions
 
 #+BEGIN_SRC emacs-lisp
   (use-package irony
@@ -389,6 +393,8 @@ Indent with width 4 and use clang formatting for auto-formatting on save
 #+END_SRC
 
 ** Indexing
+
+RTags is a C/C++ indexer used for code-completion and -navigation / reference finding.
 
 #+BEGIN_SRC emacs-lisp
   (use-package rtags
@@ -449,6 +455,8 @@ Add flycheck support
   (setq org-src-window-setup 'current-window)
 #+END_SRC
 
+Define a function to my global TODO list. Use =C-c T= to open the TODO file.
+
 #+BEGIN_SRC emacs-lisp
   (defun find-todo ()
     "Edit todo.org"
@@ -495,6 +503,10 @@ Customize appearance.
 #+END_SRC
 
 * PlantUML
+
+PlantUML is used to generate UML from text descriptions. 
+Expect the plantuml.jar file in the home directory.
+
 #+BEGIN_SRC emacs-lisp
   (use-package plantuml-mode)
   ;; active Org-babel languages

@@ -444,7 +444,7 @@ Add flycheck support
 
 ** CMake
 #+BEGIN_SRC emacs-lisp
-  (use-package cmake-mode)
+  (add-to-list 'load-path "~/config/emacs/cmake-mode")
 #+END_SRC
 
 * Org

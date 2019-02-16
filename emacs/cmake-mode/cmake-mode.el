@@ -140,13 +140,14 @@ set the path with these commands:
                              (looking-at (concat "[ \t]*" cmake-regex-paren-left))))
                 (setq cur-indent (+ cur-indent cmake-tab-width)))
               (when (string-match (concat "^" cmake-regex-paren-right "$") token)
-				(setq cur-indent (- cur-indent cmake-tab-width))))
+                (setq cur-indent (- cur-indent cmake-tab-width))))
             (goto-char point-start)
-            ;; If next token closes the block, decrease indentation
+            ; If next token closes the block, decrease indentation
             (when (looking-at-p cmake-regex-close)
-			  (setq cur-indent (- cur-indent cmake-tab-width)))
-			(when (string-match-p "^[ \\t]*\)[ \\t]*$" (thing-at-point 'line))
-			  (setq cur-indent 0))
+              (setq cur-indent (- cur-indent cmake-tab-width)))
+            ; If the current line matches only one closing paren, set indent to zero
+            (when (string-match-p "^[ \\t]*\)[ \\t]*$" (thing-at-point 'line))
+              (setq cur-indent 0))
             )
           )
         ; Indent this line by the amount selected.

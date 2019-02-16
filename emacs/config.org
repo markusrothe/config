@@ -89,6 +89,10 @@ Move all backup files into a common central location
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
+** Don't use tabs
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+END_SRC
 * Interface
 ** Command completion
 

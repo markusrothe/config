@@ -151,7 +151,12 @@ Use =dired-rainbow= for more colors in dired buffers.
     (add-hook 'dired-mode-hook 'dired-collapse-mode)
     )
 #+END_SRC
+** Buffer handling
 
+Use =ibuffer= as a default to show buffers and also open it in another window
+#+BEGIN_SRC emacs-lisp
+(defalias 'list-buffers 'ibuffer)
+#+END_SRC
 * Appearance
 
 Use the zenburn color theme

@@ -402,53 +402,32 @@ Indent with width 4 and use clang formatting for auto-formatting on save
 #+END_SRC
 
 ** Indexing
-
-RTags is a C/C++ indexer used for code-completion and -navigation / reference finding.
-
 #+BEGIN_SRC emacs-lisp
-  (use-package rtags
-    :config 
-    (define-key c-mode-base-map (kbd "M-.")
-      (function rtags-find-symbol-at-point))
-    (define-key c-mode-base-map (kbd "M-,")
-      (function rtags-find-references-at-point))
-    (define-key c-mode-base-map (kbd "M-#")
-      (function rtags-find-symbol-current-file))
-    (rtags-enable-standard-keybindings)
-    (setq rtags-autostart-diagnostics t)
-    (rtags-diagnostics)
-
-    (global-set-key (kbd "<M-up>") 'rtags-previous-match)
-    (global-set-key (kbd "<M-down>") 'rtags-next-match)
-    (global-set-key (kbd "<M-left>") 'rtags-location-stack-back)
-    (global-set-key (kbd "<M-right>") 'rtags-location-stack-forward))
-#+END_SRC
-
-Add company mode support.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package company-rtags
+  (use-package lsp-mode :commands lsp)
+  (use-package lsp-ui 
+    :commands lsp-ui-mode
     :config
-    (add-to-list 'company-backends 'company-rtags))
-#+END_SRC
+    (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+    (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+    (setq lsp-ui-peek-list-width 100))
 
-Add flycheck support
+  (use-package company-lsp :commands company-lsp)
 
-#+BEGIN_SRC emacs-lisp
-  (use-package flycheck-rtags
-    :config
-    (defun my-flycheck-rtags-setup ()
-      (flycheck-select-checker 'rtags)
-      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-      (setq-local flycheck-check-syntax-automatically nil))
-    (add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
-    (add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
-    (add-hook 'objc-mode-hook #'my-flycheck-rtags-setup))
+  (use-package ccls
+    :hook ((c-mode c++-mode objc-mode) .
+           (lambda () (require 'ccls) (lsp))))
+  (setq ccls-executable "/usr/local/bin/ccls")
+  (setq lsp-prefer-flymake nil)
+
+  (use-package ivy-xref
+    :ensure t
+    :init (setq xref-show-xrefs-function #'ivy-xref-show-xrefs))
 #+END_SRC
 
 ** CMake
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/config/emacs/cmake-mode")
+  (setq cmake-tab-width 4)
 #+END_SRC
 
 * Org

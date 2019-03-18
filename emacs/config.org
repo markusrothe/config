@@ -135,9 +135,9 @@ Use counsel-ag for fast grep inside a project
 
 Use avy for characteavr based searches in a file.
 #+BEGIN_SRC emacs-lisp
-  (use-package avy
-    :config
-    :bind("M-s" . avy-goto-char))
+  (use-package ace-jump-mode
+    :config  
+    :bind("M-s" . 'ace-jump-mode))
 #+END_SRC
 
 ** Dired mode
@@ -153,9 +153,89 @@ Use =dired-rainbow= for more colors in dired buffers.
 #+END_SRC
 ** Buffer handling
 
+
 Use =ibuffer= as a default to show buffers and also open it in another window
 #+BEGIN_SRC emacs-lisp
 (defalias 'list-buffers 'ibuffer)
+#+END_SRC
+
+** Treemacs
+
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+  :config
+  (progn
+    (setq treemacs-collapse-dirs                 (if (executable-find "python") 3 0)
+          treemacs-deferred-git-apply-delay      0.5
+          treemacs-display-in-side-window        t
+          treemacs-file-event-delay              5000
+          treemacs-file-follow-delay             0.2
+          treemacs-follow-after-init             t
+          treemacs-git-command-pipe              ""
+          treemacs-goto-tag-strategy             'refetch-index
+          treemacs-indentation                   2
+          treemacs-indentation-string            " "
+          treemacs-is-never-other-window         nil
+          treemacs-max-git-entries               5000
+          treemacs-no-png-images                 nil
+          treemacs-no-delete-other-windows       t
+          treemacs-project-follow-cleanup        nil
+          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-recenter-distance             0.1
+          treemacs-recenter-after-file-follow    nil
+          treemacs-recenter-after-tag-follow     nil
+          treemacs-recenter-after-project-jump   'always
+          treemacs-recenter-after-project-expand 'on-distance
+          treemacs-show-cursor                   nil
+          treemacs-show-hidden-files             t
+          treemacs-silent-filewatch              nil
+          treemacs-silent-refresh                nil
+          treemacs-sorting                       'alphabetic-desc
+          treemacs-space-between-root-nodes      t
+          treemacs-tag-follow-cleanup            t
+          treemacs-tag-follow-delay              1.5
+          treemacs-width                         35)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode t)
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null (executable-find "python3"))))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
 #+END_SRC
 * Appearance
 
@@ -250,7 +330,11 @@ Set Keybinding for finding files in a project and switching between related file
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-o") 'projectile-find-file)
+  (global-set-key (kbd "M-O") 'projectile-find-file-in-known-projects)
   (global-set-key (kbd "C-c o") 'projectile-find-other-file)
+  (global-set-key (kbd "C-c p c") 'projectile-compile-project)
+  (global-set-key (kbd "C-c p d") 'projectile-dired)
+  (global-set-key (kbd "C-c p r") 'projectile-run-project)
 #+END_SRC
 
 ** Git
@@ -323,16 +407,11 @@ Company mode provides good autocomplete options.
     (setq company-idle-delay t))
 #+END_SRC
 
-Disable automatic lower case of completions
-
-#+BEGIN_SRC emacs-lisp
-  (setq company-dabbrev-downcase nil)
-#+END_SRC
-
 Remove default company backends -> We only want the ones we need and we configure them with their related packages
-
+But we keep dabbrev as we want to complete based on words inside the buffer.
 #+BEGIN_SRC emacs-lisp
   (setq company-backends nil)
+  (add-to-list 'company-backends 'company-dabbrev)
 #+END_SRC
 ** Snippets
 
@@ -340,13 +419,27 @@ Use yasnippet for test-snippets and their completion when pressing =TAB=
 
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
-      :diminish yas-minor-mode
-      :config
-      (add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippet-snippets")
-      (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
-      (add-to-list 'yas-snippet-dirs "~/config/snippets")
-      (yas-global-mode)
-      (global-set-key (kbd "M-/") 'company-yasnippet))
+    :diminish yas-minor-mode
+    :config
+    (add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippet-snippets")
+    (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
+    (add-to-list 'yas-snippet-dirs "~/config/snippets")
+    (yas-global-mode)
+    (global-set-key (kbd "M-/") 'company-yasnippet)
+
+    ;; Add yasnippet support for all company backends
+    ;; https://github.com/syl20bnr/spacemacs/pull/179
+    (defvar company-mode/enable-yas ;TODO: 
+      "Enable yasnippet for all backends.")
+
+    (defun company-mode/backend-with-yas (backend)
+      (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+          backend
+        (append (if (consp backend) backend (list backend))
+                '(:with company-yasnippet))))
+
+    (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+    )
 #+END_SRC
 ** Markdown
 
@@ -430,6 +523,7 @@ Indent with width 4 and use clang formatting for auto-formatting on save
     (add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
     (add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
     (add-hook 'objc-mode-hook #'my-flycheck-rtags-setup))
+
 #+END_SRC
 ** CMake
 #+BEGIN_SRC emacs-lisp

@@ -335,6 +335,7 @@ Set Keybinding for finding files in a project and switching between related file
   (global-set-key (kbd "C-c p c") 'projectile-compile-project)
   (global-set-key (kbd "C-c p d") 'projectile-dired)
   (global-set-key (kbd "C-c p r") 'projectile-run-project)
+  (global-set-key (kbd "C-c p t") 'projectile-test-project)
 #+END_SRC
 
 ** Git

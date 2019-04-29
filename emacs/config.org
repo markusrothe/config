@@ -267,6 +267,11 @@ Leerzeichen mode shows tabs, spaces and newlines
     (leerzeichen-mode))
 #+END_SRC
 
+Set the font size.
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'default nil :height 140)
+#+END_SRC
+
 * Coding
 ** Programming specific interface improvements
 
@@ -531,7 +536,11 @@ Indent with width 4 and use clang formatting for auto-formatting on save
   (add-to-list 'load-path "~/config/emacs/cmake-mode")
   (setq cmake-tab-width 4)
 #+END_SRC
-
+** Compile mode
+When compiling, jump to the first error in the compile output.
+#+BEGIN_SRC emacs-lisp
+  (setq compilation-scroll-output 'first-error)
+#+END_SRC
 * Org
 ** General settings.
 
@@ -606,8 +615,13 @@ Expect the plantuml.jar file in the home directory.
      (plantuml . t)))
   (setq org-plantuml-jar-path
         (expand-file-name "~/plantuml.jar"))
+
+
+
   (add-hook 'org-babel-after-execute-hook
             (lambda ()
               (when org-inline-image-overlays
                 (org-redisplay-inline-images))))
+
+  (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
 #+END_SRC

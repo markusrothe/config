@@ -269,7 +269,7 @@ Leerzeichen mode shows tabs, spaces and newlines
 
 Set the font size.
 #+BEGIN_SRC emacs-lisp
-(set-face-attribute 'default nil :height 140)
+(set-face-attribute 'default nil :height 120)
 #+END_SRC
 
 * Coding
@@ -418,6 +418,7 @@ But we keep dabbrev as we want to complete based on words inside the buffer.
 #+BEGIN_SRC emacs-lisp
   (setq company-backends nil)
   (add-to-list 'company-backends 'company-dabbrev)
+  (setq company-dabbrev-downcase nil)
 #+END_SRC
 ** Snippets
 

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: function definition
-# key: foo
+# key: fct
 # --
 
 ${1:<returnType>} ${2:<functionName>}(${3:<params>})

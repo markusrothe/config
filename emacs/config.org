@@ -2,24 +2,30 @@ Some config items are taken from https://raw.githubusercontent.com/jamiecollinso
 
 * Setup
 ** Configure package sources
-
 Add MELPA as a package repository.
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-  (setq package-enable-at-startup nil)
+(require 'package)
+(setq package-enable-at-startup nil)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(package-initialize)
 #+END_SRC
 
 ** Bootstrap use-package
 If =use-package= is not installed, install it
 
 #+BEGIN_SRC emacs-lisp
-  (unless (package-installed-p 'use-package)
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
     (package-install 'use-package))
   (setq use-package-verbose t)
   (require 'use-package)
   (setq load-prefer-newer t)
 #+END_SRC
+
+
+
+
 
 All packages should be installed via the package manager. 
 This is equivalent to setting =:ensure t= on each call to =use-package=
@@ -242,9 +248,9 @@ Use =ibuffer= as a default to show buffers and also open it in another window
 Use the zenburn color theme
 
 #+BEGIN_SRC emacs-lisp
-  (use-package zenburn-theme
+  (use-package material-theme
     :config
-    (load-theme 'zenburn t))
+    (load-theme 'material t))
 #+END_SRC
 
 Highlight the current line.

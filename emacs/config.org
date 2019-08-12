@@ -94,11 +94,27 @@ Move all backup files into a common central location
 ** Start in Fullscreen
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(font . "Consolas"))
+(set-face-attribute 'default t :font "Consolas")
 #+END_SRC
 ** Don't use tabs
 #+BEGIN_SRC emacs-lisp
 (setq-default indent-tabs-mode nil)
 #+END_SRC
+
+** Performance Tweaks
+#+BEGIN_SRC emacs-lisp
+(defun my-minibuffer-setup-hook ()
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun my-minibuffer-exit-hook ()
+  (setq gc-cons-threshold 800000))
+
+(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+
+#+END_SRC
+
 * Interface
 ** Command completion
 
@@ -137,6 +153,18 @@ Use counsel-ag for fast grep inside a project
     :config
     (counsel-mode)
     (global-set-key (kbd "C-c k") 'counsel-ag))
+  (use-package counsel-etags
+    :ensure t
+    :bind (("C-]" . counsel-etags-find-tag-at-point))
+    :init
+    (add-hook 'prog-mode-hook
+          (lambda ()
+            (add-hook 'after-save-hook
+              'counsel-etags-virtual-update-tags 'append 'local)))
+    :config
+    (setq counsel-etags-update-interval 60)
+    (setq counsel-etags-tags-program "D:\\\\home\\\\ctags.exe")
+    (add-to-list 'counsel-etags-ignore-directories "build"))
 #+END_SRC
 
 Use avy for characteavr based searches in a file.
@@ -162,7 +190,21 @@ Use =dired-rainbow= for more colors in dired buffers.
 
 Use =ibuffer= as a default to show buffers and also open it in another window
 #+BEGIN_SRC emacs-lisp
-(defalias 'list-buffers 'ibuffer)
+  (defalias 'list-buffers 'ibuffer)
+  
+  ;; nearly all of this is the default layout
+  (setq ibuffer-formats 
+        '((mark modified read-only " "
+                (name 60 60 :left :elide) ; change: 30s were originally 18s
+                " "
+                (size 9 -1 :right)
+                " "
+                (mode 16 16 :left :elide)
+                " " filename-and-process)
+          (mark " "
+                (name 16 -1)
+                " " filename)))
+  (use-package ibuffer-projectile)
 #+END_SRC
 
 ** Treemacs
@@ -245,7 +287,7 @@ Use =ibuffer= as a default to show buffers and also open it in another window
 #+END_SRC
 * Appearance
 
-Use the zenburn color theme
+Use the material color theme
 
 #+BEGIN_SRC emacs-lisp
   (use-package material-theme
@@ -321,7 +363,9 @@ Projectile handles folders which are in version control.
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
     :config
-    (projectile-mode))
+    (projectile-mode)
+    (setq projectile-indexing-method 'alien)
+    )
 #+END_SRC
 
 Tell projectile to integrate with =ivy= for completion.
@@ -405,6 +449,8 @@ TimeMachine lets us step through the history of a file as recorded in git.
       :overlay-category 'flycheck-info-overlay
       :fringe-bitmap 'flycheck-fringe-bitmap-ball
       :fringe-face 'flycheck-fringe-info))
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-clang-tidy-setup))
     #+END_SRC
 
 ** Autocomplete
@@ -416,7 +462,9 @@ Company mode provides good autocomplete options.
     :diminish
     :config
     (add-hook 'after-init-hook 'global-company-mode)
-    (setq company-idle-delay t))
+    (global-set-key (kbd "C-<tab>") 'company-complete)
+    (setq company-idle-delay 0.5))
+
 #+END_SRC
 
 Remove default company backends -> We only want the ones we need and we configure them with their related packages
@@ -425,6 +473,14 @@ But we keep dabbrev as we want to complete based on words inside the buffer.
   (setq company-backends nil)
   (add-to-list 'company-backends 'company-dabbrev)
   (setq company-dabbrev-downcase nil)
+  (use-package company-lsp
+    :requires company
+    :config
+    (push 'company-lsp company-backends)
+     ;; Disable client-side cache because the LSP server does a better job.
+    (setq company-transformers nil
+        company-lsp-async t
+        company-lsp-cache-candidates nil))
 #+END_SRC
 ** Snippets
 
@@ -465,20 +521,6 @@ Use yasnippet for test-snippets and their completion when pressing =TAB=
     :init (setq markdown-command "multimarkdown"))
 #+END_SRC
 ** C
-Use =irony-mode= for C++ completions
-
-#+BEGIN_SRC emacs-lisp
-  (use-package irony
-    :hook (c-mode . irony-mode))
-#+END_SRC
-
-Add company mode support.
-
-#+BEGIN_SRC emacs-lisp
-   (use-package company-irony
-    :config
-    (add-to-list 'company-backends 'company-irony))
-#+END_SRC
 
 Open .h files in c++-mode
 
@@ -499,47 +541,73 @@ Indent with width 4 and use clang formatting for auto-formatting on save
 
     (add-hook 'c-mode-hook #'my-formatting-setup)
     (add-hook 'c++-mode-hook #'my-formatting-setup)
-  (add-hook 'c++-mode-hook
+    (add-hook 'c++-mode-hook
             (lambda () (add-hook 'before-save-hook 'clang-format-buffer nil 'local))))
 #+END_SRC
 
 ** Indexing
+RTags (commented out to check check out clangd and lsp-mode instead)
 #+BEGIN_SRC emacs-lisp
-  (use-package rtags
-    :config 
-    (define-key c-mode-base-map (kbd "M-.")
-      (function rtags-find-symbol-at-point))
-    (define-key c-mode-base-map (kbd "M-,")
-      (function rtags-find-references-at-point))
-    (define-key c-mode-base-map (kbd "M-#")
-      (function rtags-find-symbol-current-file))
-    (rtags-enable-standard-keybindings)
-    (setq rtags-autostart-diagnostics t)
-    (rtags-diagnostics)
-    (setq rtags-display-result-backend 'ivy)
+  ;; (use-package rtags
+  ;;   :config 
+  ;;   (define-key c-mode-base-map (kbd "M-.")
+  ;;     (function rtags-find-symbol-at-point))
+  ;;   (define-key c-mode-base-map (kbd "M-,")
+  ;;     (function rtags-find-references-at-point))
+  ;;   (define-key c-mode-base-map (kbd "M-#")
+  ;;     (function rtags-find-symbol-current-file))
+  ;;   (rtags-enable-standard-keybindings)
+  ;;   (setq rtags-autostart-diagnostics t)
+  ;;   (rtags-diagnostics)
+  ;;   (setq rtags-display-result-backend 'ivy)
 
-    (global-set-key (kbd "<M-up>") 'rtags-previous-match)
-    (global-set-key (kbd "<M-down>") 'rtags-next-match)
-    (global-set-key (kbd "<M-left>") 'rtags-location-stack-back)
-    (global-set-key (kbd "<M-right>") 'rtags-location-stack-forward))
+  ;;   (global-set-key (kbd "<M-up>") 'rtags-previous-match)
+  ;;   (global-set-key (kbd "<M-down>") 'rtags-next-match)
+  ;;   (global-set-key (kbd "<M-left>") 'rtags-location-stack-back)
+  ;;   (global-set-key (kbd "<M-right>") 'rtags-location-stack-forward))
 
-  (use-package company-rtags
-    :config
-    (add-to-list 'company-backends 'company-rtags))
+  ;; (use-package company-rtags
+  ;;   :config
+  ;;   (add-to-list 'company-backends 'company-rtags))
 
-  (use-package flycheck-rtags
-    :config
-    (defun my-flycheck-rtags-setup ()
-      (flycheck-select-checker 'rtags)
-      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-      (setq-local flycheck-check-syntax-automatically nil))
-    (add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
-    (add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
-    (add-hook 'objc-mode-hook #'my-flycheck-rtags-setup))
+  ;; (use-package flycheck-rtags
+  ;;   :config
+  ;;   (defun my-flycheck-rtags-setup ()
+  ;;     (flycheck-select-checker 'rtags)
+  ;;     (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+  ;;     (setq-local flycheck-check-syntax-automatically nil))
+  ;;   (add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
+  ;;   (add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
+  ;;   (add-hook 'objc-mode-hook #'my-flycheck-rtags-setup))
 
 #+END_SRC
+
+clangd + lsp-mode
+#+BEGIN_SRC emacs-lisp
+    (use-package lsp-mode
+      :config
+      (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
+      (setq lsp-prefer-flymake nil) ;; Prefer using lsp-ui (flycheck) over flymake.
+      (add-hook 'c++-mode-hook #'lsp)
+      (add-hook 'python-mode-hook #'lsp)
+      (add-hook 'rust-mode-hook #'lsp))
+
+  (use-package lsp-ui
+    :requires lsp-mode flycheck
+    :config
+
+    (setq lsp-ui-doc-enable nil
+          lsp-ui-sideline-enable nil
+          lsp-ui-flycheck-enable t
+          lsp-ui-flycheck-list-position 'right
+          lsp-ui-flycheck-live-reporting t)
+
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+#+END_SRC
+
 ** CMake
 #+BEGIN_SRC emacs-lisp
+(use-package cmake-font-lock)
   (add-to-list 'load-path "~/config/emacs/cmake-mode")
   (setq cmake-tab-width 4)
 #+END_SRC
@@ -558,6 +626,8 @@ When compiling, jump to the first error in the compile output.
   (setq org-default-notes-file (concat org-directory "/notes.org"))
   (setq org-src-fontify-natively 't)
   (setq org-src-tab-acts-natively t)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
   (setq org-src-window-setup 'current-window)
 #+END_SRC
 

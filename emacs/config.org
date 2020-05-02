@@ -94,8 +94,6 @@ Move all backup files into a common central location
 ** Start in Fullscreen
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(font . "Consolas"))
-(set-face-attribute 'default t :font "Consolas")
 #+END_SRC
 ** Don't use tabs
 #+BEGIN_SRC emacs-lisp
@@ -114,32 +112,23 @@ Move all backup files into a common central location
 (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 #+END_SRC
-
 * Interface
 ** Command completion
 
 Use =ivy= as a completion framework for the minibuffer.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy
-      :diminish ivy-mode
-      :config
-      (ivy-mode t))
+;;  (use-package ivy
+;;      :diminish ivy-mode
+;;      :config
+;;      (ivy-mode t))
 #+END_SRC
-
-Disable ivy default filter start.
-
-#+BEGIN_SRC emacs-lisp
-  (setq ivy-initial-inputs-alist nil)
-#+END_SRC
-
 ** Better searching
 
 Use ag for searches
 #+BEGIN_SRC emacs-lisp
   (use-package ag)
 #+END_SRC
-
 Use swiper to improve on =isearch=
 #+BEGIN_SRC emacs-lisp
   (use-package swiper
@@ -149,22 +138,10 @@ Use swiper to improve on =isearch=
 
 Use counsel-ag for fast grep inside a project
 #+BEGIN_SRC emacs-lisp
-  (use-package counsel
-    :config
-    (counsel-mode)
-    (global-set-key (kbd "C-c k") 'counsel-ag))
-  (use-package counsel-etags
-    :ensure t
-    :bind (("C-]" . counsel-etags-find-tag-at-point))
-    :init
-    (add-hook 'prog-mode-hook
-          (lambda ()
-            (add-hook 'after-save-hook
-              'counsel-etags-virtual-update-tags 'append 'local)))
-    :config
-    (setq counsel-etags-update-interval 60)
-    (setq counsel-etags-tags-program "D:\\\\home\\\\ctags.exe")
-    (add-to-list 'counsel-etags-ignore-directories "build"))
+(use-package counsel
+:config
+(counsel-mode)
+(global-set-key (kbd "C-c k") 'counsel-ag))
 #+END_SRC
 
 Use avy for characteavr based searches in a file.
@@ -173,6 +150,13 @@ Use avy for characteavr based searches in a file.
     :config  
     :bind("M-s" . 'ace-jump-mode))
 #+END_SRC
+
+
+
+
+
+
+
 
 ** Dired mode
 
@@ -371,7 +355,8 @@ Projectile handles folders which are in version control.
 Tell projectile to integrate with =ivy= for completion.
 
 #+BEGIN_SRC emacs-lisp
-  (setq projectile-completion-system 'ivy)
+(setq projectile-completion-system 'ivy)
+(setq ivy-initial-inputs-alist nil) ; make sure the minibuffer is empty when invoked...
 #+END_SRC
 
 Enable caching for large files
@@ -449,8 +434,7 @@ TimeMachine lets us step through the history of a file as recorded in git.
       :overlay-category 'flycheck-info-overlay
       :fringe-bitmap 'flycheck-fringe-bitmap-ball
       :fringe-face 'flycheck-fringe-info))
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-clang-tidy-setup))
+
     #+END_SRC
 
 ** Autocomplete

@@ -1077,7 +1077,7 @@
         <Background Type="CT_RAW" Source="FFDEDFE7" />
       </Color>
       <Color Name="FileIndicatorPanelBorder">
-        <Background Type="CT_RAW" Source="FFA2A4A5" />
+        <Background Type="CT_RAW" Source="FF000D36" />
       </Color>
     </Category>
     <Category Name="ColorizedSignatureHelp colors" GUID="{75a05685-00a8-4ded-bae5-e7a50bfa929a}">
@@ -1118,11 +1118,11 @@
         <Foreground Type="CT_RAW" Source="FF66C3E6" />
       </Color>
       <Color Name="MarkerFormatDefinition/HighlightedReference">
-        <Background Type="CT_RAW" Source="FF000D36" />
-        <Foreground Type="CT_RAW" Source="FFADC0D3" />
+        <Background Type="CT_RAW" Source="FF374852" />
+        <Foreground Type="CT_RAW" Source="FF263238" />
       </Color>
       <Color Name="MarkerFormatDefinition/FindHighlight">
-        <Background Type="CT_RAW" Source="FF000D36" />
+        <Background Type="CT_RAW" Source="FF2D3C44" />
         <Foreground Type="CT_INVALID" Source="00000000" />
       </Color>
       <Color Name="MarkerFormatDefinition/ScopeHighlight">
@@ -1154,8 +1154,8 @@
         <Foreground Type="CT_RAW" Source="FF7CA5A0" />
       </Color>
       <Color Name="CurrentLineActiveFormat">
-        <Background Type="CT_AUTOMATIC" Source="00000000" />
-        <Foreground Type="CT_RAW" Source="FF2C383E" />
+        <Background Type="CT_RAW" Source="FF263238" />
+        <Foreground Type="CT_RAW" Source="FF38474E" />
       </Color>
       <Color Name="deltadiff.remove.line">
         <Background Type="CT_RAW" Source="FF2D0000" />
@@ -1450,7 +1450,7 @@
         <Foreground Type="CT_RAW" Source="FFEEFFFF" />
       </Color>
       <Color Name="MarkerFormatDefinition/HighlightedDefinition">
-        <Background Type="CT_RAW" Source="FF000D36" />
+        <Background Type="CT_RAW" Source="FF2D3C44" />
         <Foreground Type="CT_RAW" Source="FFC0D3AD" />
       </Color>
       <Color Name="xml doc comment - attribute name">
@@ -1550,7 +1550,7 @@
         <Foreground Type="CT_COLORINDEX" Source="00000002" />
       </Color>
       <Color Name="MarkerFormatDefinition/HighlightedWrittenReference">
-        <Background Type="CT_RAW" Source="FF000D36" />
+        <Background Type="CT_RAW" Source="FF2D3C44" />
         <Foreground Type="CT_RAW" Source="FFADC0D3" />
       </Color>
       <Color Name="brace matching">
@@ -2074,7 +2074,7 @@
         <Foreground Type="CT_INVALID" Source="00000000" />
       </Color>
       <Color Name="ReSharper Matched Brace">
-        <Background Type="CT_RAW" Source="FF000D36" />
+        <Background Type="CT_RAW" Source="FF2D3C44" />
         <Foreground Type="CT_INVALID" Source="00000000" />
       </Color>
       <Color Name="ReSharper Unmatched Brace">
@@ -2082,11 +2082,11 @@
         <Foreground Type="CT_INVALID" Source="00000000" />
       </Color>
       <Color Name="ReSharper Context Exit">
-        <Background Type="CT_RAW" Source="FF000D36" />
+        <Background Type="CT_RAW" Source="FF2D3C44" />
         <Foreground Type="CT_INVALID" Source="00000000" />
       </Color>
       <Color Name="ReSharper Usage of element under cursor">
-        <Background Type="CT_RAW" Source="FF000D36" />
+        <Background Type="CT_RAW" Source="FF2D3C44" />
         <Foreground Type="CT_INVALID" Source="00000000" />
       </Color>
       <Color Name="ReSharper JavaScript Block-Local Constant Identifier">

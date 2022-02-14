@@ -271,12 +271,16 @@ Use =ibuffer= as a default to show buffers and also open it in another window
 #+END_SRC
 * Appearance
 
-Use the material color theme
+Themes:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package material-theme
+  (use-package material-theme)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package base16-theme
     :config
-    (load-theme 'material t))
+    (load-theme 'base16-ocean t))
 #+END_SRC
 
 Highlight the current line.
@@ -340,16 +344,22 @@ Smart dash guesses _ vs - depending on context.
     (add-hook 'python-mode-hook 'smart-dash-mode))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package expand-region)
+#+END_SRC
+
+
 ** Project management
 
 Projectile handles folders which are in version control.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :config
-    (projectile-mode)
-    (setq projectile-indexing-method 'alien)
-    )
+    (use-package projectile
+      :config
+      (projectile-mode)
+      (setq projectile-svn-command "find . -type f -not -iwholename '*.svn/*' -print0")
+      (setq projectile-indexing-method 'alien)
+      )
 #+END_SRC
 
 Tell projectile to integrate with =ivy= for completion.
@@ -365,6 +375,12 @@ Enable caching for large files
   (setq projectile-enable-caching t)
 #+END_SRC
 
+Enable CMake Presets
+
+#+BEGIN_SRC emacs-lisp
+  (setq projectile-enable-cmake-presets t)
+#+END_SRC
+
 Set Keybinding for finding files in a project and switching between related files
 (for example .h/.cpp files)
 
@@ -377,6 +393,9 @@ Set Keybinding for finding files in a project and switching between related file
   (global-set-key (kbd "C-c p r") 'projectile-run-project)
   (global-set-key (kbd "C-c p t") 'projectile-test-project)
 #+END_SRC
+
+
+
 
 ** Git
 Use magit as a frontend for git. =C-x g= to open it.
@@ -457,14 +476,7 @@ But we keep dabbrev as we want to complete based on words inside the buffer.
   (setq company-backends nil)
   (add-to-list 'company-backends 'company-dabbrev)
   (setq company-dabbrev-downcase nil)
-  (use-package company-lsp
-    :requires company
-    :config
-    (push 'company-lsp company-backends)
-     ;; Disable client-side cache because the LSP server does a better job.
-    (setq company-transformers nil
-        company-lsp-async t
-        company-lsp-cache-candidates nil))
+
 #+END_SRC
 ** Snippets
 
@@ -574,7 +586,10 @@ clangd + lsp-mode
       (setq lsp-prefer-flymake nil) ;; Prefer using lsp-ui (flycheck) over flymake.
       (add-hook 'c++-mode-hook #'lsp)
       (add-hook 'python-mode-hook #'lsp)
-      (add-hook 'rust-mode-hook #'lsp))
+      (add-hook 'rust-mode-hook #'lsp)
+      (global-set-key (kbd "M-.") 'lsp-find-definition)
+      (global-set-key (kbd "M-,") 'lsp-find-declaration)
+      (global-set-key (kbd "C-M-,") 'lsp-find-references))
 
   (use-package lsp-ui
     :requires lsp-mode flycheck
@@ -587,6 +602,11 @@ clangd + lsp-mode
           lsp-ui-flycheck-live-reporting t)
 
     (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+  (use-package lsp-ivy
+    :requires lsp-mode
+    :config
+    (global-set-key (kbd "M-#") 'lsp-ivy-workspace-symbol))          
 #+END_SRC
 
 ** CMake

@@ -280,7 +280,7 @@ Themes:
 #+BEGIN_SRC emacs-lisp
   (use-package base16-theme
     :config
-    (load-theme 'base16-ocean t))
+    (load-theme 'base16-default-dark t))
 #+END_SRC
 
 Highlight the current line.
@@ -305,19 +305,15 @@ Leerzeichen mode shows tabs, spaces and newlines
 
 Set the font size.
 #+BEGIN_SRC emacs-lisp
-(set-face-attribute 'default nil :height 120)
+  (set-face-attribute 'default nil
+                      :height 100
+                      :family "Jetbrains Mono")
+
+  (setq-default line-spacing 5)
 #+END_SRC
 
 * Coding
 ** Programming specific interface improvements
-
-Highlight parens etc. for improved readability.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package rainbow-delimiters
-    :config
-    (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
-#+END_SRC
 
 Highlight strings which represent colours. I only want this in programming modes, and I don't want colour names to be highlighted (=x-colors=).
 
@@ -452,7 +448,9 @@ TimeMachine lets us step through the history of a file as recorded in git.
       :severity 0
       :overlay-category 'flycheck-info-overlay
       :fringe-bitmap 'flycheck-fringe-bitmap-ball
-      :fringe-face 'flycheck-fringe-info))
+      :fringe-face 'flycheck-fringe-info)
+
+    (global-set-key (kbd "M-+") 'flycheck-next-error))
 
     #+END_SRC
 
@@ -582,11 +580,12 @@ clangd + lsp-mode
 #+BEGIN_SRC emacs-lisp
     (use-package lsp-mode
       :config
-      (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
+      (setq lsp-clients-clangd-args '("-j=8" "--background-index" "--log=error"))
       (setq lsp-prefer-flymake nil) ;; Prefer using lsp-ui (flycheck) over flymake.
       (add-hook 'c++-mode-hook #'lsp)
       (add-hook 'python-mode-hook #'lsp)
       (add-hook 'rust-mode-hook #'lsp)
+      (global-set-key (kbd "M-\-") 'lsp-clangd-find-other-file)
       (global-set-key (kbd "M-.") 'lsp-find-definition)
       (global-set-key (kbd "M-,") 'lsp-find-declaration)
       (global-set-key (kbd "C-M-,") 'lsp-find-references))

@@ -23,10 +23,6 @@ If =use-package= is not installed, install it
   (setq load-prefer-newer t)
 #+END_SRC
 
-
-
-
-
 All packages should be installed via the package manager. 
 This is equivalent to setting =:ensure t= on each call to =use-package=
 

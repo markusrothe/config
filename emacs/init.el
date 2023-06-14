@@ -115,6 +115,8 @@
 ;; show line numbers
 (global-display-line-numbers-mode 1)
 
+;; delete characters when typing while text is selected
+(delete-selection-mode 1)
 
 ;; leerzeichen-mode shows whitespace characters
 (use-package leerzeichen
@@ -133,9 +135,10 @@
 	     (setq rainbow-x-colors nil)
 	     (add-hook 'prog-mode-hook 'rainbow-mode))
 
-
-;; -
-(use-package expand-region)
+;; dynamically expand region selections
+(use-package expand-region
+  :config
+  (global-set-key (kbd "M-q") 'er/expand-region))
 
 ;; use projectile as a project managing tool
 (use-package projectile
@@ -150,6 +153,7 @@
 (global-set-key (kbd "M-o") 'projectile-find-file)
 (global-set-key (kbd "M-O") 'projectile-find-file-in-known-projects)
 (global-set-key (kbd "C-c o") 'projectile-find-other-file)
+(global-set-key (kbd "C-c p i") 'projectile-configure-project)
 (global-set-key (kbd "C-c p c") 'projectile-compile-project)
 (global-set-key (kbd "C-c p d") 'projectile-dired)
 (global-set-key (kbd "C-c p r") 'projectile-run-project)
@@ -301,9 +305,24 @@
   (find-file "~/org/todo.org"))
 (global-set-key (kbd "C-c T") 'find-todo)
 
-
 ;; org mode bullet points
 (use-package org-bullets
     :config
     (setq org-bullets-bullet-list '("∙"))
     (add-hook 'org-mode-hook 'org-bullets-mode))
+
+;; tree-sitter aims to provide better syntax highlighting
+(use-package tree-sitter
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs)
+
+;; for text-search with ripgrep (ripgrep needs to be in the PATH)
+(use-package deadgrep
+  :config
+  (global-set-key (kbd "<f5>") #'deadgrep))
+
+;; syntax highlighting for cmake files
+(use-package cmake-mode)

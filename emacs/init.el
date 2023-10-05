@@ -272,9 +272,7 @@
 	     (setq lsp-clients-clangd-args '("-j=8" "--background-index" "--log=error"))
 	     (setq lsp-prefer-flymake nil) ;; Prefer using lsp-ui (flycheck) over flymake.
 	     (add-hook 'c++-mode-hook #'lsp)
-	     (add-hook 'python-mode-hook #'lsp)
-	     (add-hook 'rust-mode-hook #'lsp)
-	     (global-set-key (kbd "M-\-") 'lsp-clangd-find-other-file)
+	     (global-set-key (kbd "M-h") 'lsp-clangd-find-other-file)
 	     (global-set-key (kbd "M-.") 'lsp-find-definition)
 	     (global-set-key (kbd "M-,") 'lsp-find-declaration)
 	     (global-set-key (kbd "C-M-,") 'lsp-find-references))
@@ -283,17 +281,17 @@
 	     :requires lsp-mode flycheck
 	     :config
 	     (setq lsp-ui-doc-enable nil
-		   lsp-ui-sideline-enable nil
+		   lsp-ui-sideline-enable t
 		   lsp-ui-flycheck-enable t
 		   lsp-ui-flycheck-list-position 'right
 		   lsp-ui-flycheck-live-reporting t)
+         (global-set-key (kbd "C-c s") 'lsp-ivy-workspace-symbol)
 	     (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
 (use-package lsp-ivy
 	     :requires lsp-mode
 	     :config
 	     (global-set-key (kbd "M-#") 'lsp-ivy-workspace-symbol))          
-
 
 ;; jump to first error in compile mode
 (setq compilation-scroll-output 'first-error)
@@ -326,6 +324,15 @@
 
 ;; syntax highlighting for cmake files
 (use-package cmake-mode)
+
+(use-package dap-mode
+  :config
+  (require 'dap-lldb)
+  (dap-mode 1)
+  (dap-tooltip-mode 1)
+  (dap-auto-configure-mode 1)
+  (dap-ui-controls-mode 1)
+  (setq dap-lldb-debug-program '("C:/Users/rothe/home/repos/llvm-project/build/bin/lldb-vscode.exe"))  )
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

@@ -289,10 +289,11 @@
 	     :requires lsp-mode flycheck
 	     :config
 	     (setq lsp-ui-doc-enable nil
-		   lsp-ui-sideline-enable nil
+		   lsp-ui-sideline-enable t
 		   lsp-ui-flycheck-enable t
 		   lsp-ui-flycheck-list-position 'right
 		   lsp-ui-flycheck-live-reporting t)
+         (global-set-key (kbd "C-c s") 'lsp-ivy-workspace-symbol)
 	     (add-hook 'lsp-mode-hook 'lsp-ui-mode))
 
 (use-package lsp-ivy
@@ -304,7 +305,6 @@
 (use-package ace-jump-mode
   :config
   (define-key global-map (kbd "C-c SPC") 'ace-jump-mode))
-
 
 ;; jump to first error in compile mode
 (setq compilation-scroll-output 'first-error)
@@ -339,9 +339,11 @@
 ;; syntax highlighting for cmake files
 (use-package cmake-mode)
 
+
 ;; debugging support
 (use-package dap-mode
   :config
+  (require 'dap-lldb)
   (dap-mode 1)
   (dap-tooltip-mode 1)
   (dap-auto-configure-mode 1)
@@ -352,7 +354,6 @@
   (setq dap-auto-configure-features '(sessions locals expressions controls tooltip))
   (setq dap-lldb-debug-program '("C:/Users/marku/wrk/llvm-project/build/bin/lldb-vscode.exe")))
 
-  
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

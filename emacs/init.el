@@ -32,6 +32,10 @@
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 
+;; scroll down / up a line
+(global-set-key [M-up] (lambda () (interactive) (scroll-up 1)))
+(global-set-key [M-down] (lambda () (interactive) (scroll-down 1)))
+
 ;; turn of error bell
 (setq ring-bell-function 'ignore)
 
@@ -88,7 +92,7 @@
 (use-package dired-hacks-utils)
 
 ;; use ibuffer to show buffers
-  (defalias 'list-buffers 'ibuffer)
+(defalias 'list-buffers 'ibuffer)
   
 (setq ibuffer-formats 
       '((mark modified read-only " "
@@ -114,6 +118,7 @@
 
 ;; show line numbers
 (global-display-line-numbers-mode 1)
+(setq display-line-numbers-type 'relative)
 
 ;; delete characters when typing while text is selected
 (delete-selection-mode 1)
@@ -274,8 +279,9 @@
 	     (add-hook 'c++-mode-hook #'lsp)
 	     (add-hook 'python-mode-hook #'lsp)
 	     (add-hook 'rust-mode-hook #'lsp)
-	     (global-set-key (kbd "M-\-") 'lsp-clangd-find-other-file)
-	     (global-set-key (kbd "M-.") 'lsp-find-definition)
+	     (global-set-key (kbd "M-.") 'xref-find-definitions)
+         (global-set-key (kbd "<M-left>") 'xref-go-back)
+         (global-set-key (kbd "<M-right>") 'xref-go-forward)
 	     (global-set-key (kbd "M-,") 'lsp-find-declaration)
 	     (global-set-key (kbd "C-M-,") 'lsp-find-references))
 
@@ -293,6 +299,11 @@
 	     :requires lsp-mode
 	     :config
 	     (global-set-key (kbd "M-#") 'lsp-ivy-workspace-symbol))          
+
+;; ace-jump to the first occurrence of typed characters
+(use-package ace-jump-mode
+  :config
+  (define-key global-map (kbd "C-c SPC") 'ace-jump-mode))
 
 
 ;; jump to first error in compile mode
@@ -320,6 +331,7 @@
 (use-package tree-sitter-langs)
 
 ;; for text-search with ripgrep (ripgrep needs to be in the PATH)
+(use-package rg)
 (use-package deadgrep
   :config
   (global-set-key (kbd "<f5>") #'deadgrep))
@@ -327,6 +339,20 @@
 ;; syntax highlighting for cmake files
 (use-package cmake-mode)
 
+;; debugging support
+(use-package dap-mode
+  :config
+  (dap-mode 1)
+  (dap-tooltip-mode 1)
+  (dap-auto-configure-mode 1)
+  (dap-ui-controls-mode 1)
+  (dap-ui-mode 1)
+  (setq dap-print-io 1)
+  (require 'dap-lldb)
+  (setq dap-auto-configure-features '(sessions locals expressions controls tooltip))
+  (setq dap-lldb-debug-program '("C:/Users/marku/wrk/llvm-project/build/bin/lldb-vscode.exe")))
+
+  
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

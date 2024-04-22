@@ -111,7 +111,7 @@
 (use-package material-theme)
 (use-package base16-theme
 	     :config
-	     (load-theme 'base16-default-dark t))
+	     (load-theme 'base16-material t))
 
 ;; highlight current line
 (global-hl-line-mode 1)
@@ -304,7 +304,7 @@
 ;; ace-jump to the first occurrence of typed characters
 (use-package ace-jump-mode
   :config
-  (define-key global-map (kbd "C-c SPC") 'ace-jump-mode))
+  (define-key global-map (kbd "M-p") 'ace-jump-mode))
 
 ;; jump to first error in compile mode
 (setq compilation-scroll-output 'first-error)
@@ -334,7 +334,8 @@
 (use-package rg)
 (use-package deadgrep
   :config
-  (global-set-key (kbd "<f5>") #'deadgrep))
+  (global-set-key (kbd "<f5>") #'deadgrep)
+  (global-set-key (kbd "C-S-f") #'deadgrep))
 
 ;; syntax highlighting for cmake files
 (use-package cmake-mode)

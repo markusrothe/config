@@ -35,6 +35,7 @@
 ;; scroll down / up a line
 (global-set-key [M-up] (lambda () (interactive) (scroll-up 1)))
 (global-set-key [M-down] (lambda () (interactive) (scroll-down 1)))
+(global-set-key (kbd "M-r") 'replace-regexp)
 
 ;; turn of error bell
 (setq ring-bell-function 'ignore)
@@ -216,7 +217,9 @@
 	     :config
 	     (add-hook 'after-init-hook 'global-company-mode)
 	     (global-set-key (kbd "C-<tab>") 'company-complete)
-	     (setq company-idle-delay 0.5))
+	     (setq company-idle-delay 0.5)
+         (setq company-minimum-prefix-length 1)
+         )
 (setq company-backends nil)
 (add-to-list 'company-backends 'company-dabbrev)
 (setq company-dabbrev-downcase nil)
@@ -304,7 +307,7 @@
 ;; ace-jump to the first occurrence of typed characters
 (use-package ace-jump-mode
   :config
-  (define-key global-map (kbd "M-p") 'ace-jump-mode))
+  (define-key global-map (kbd "M-ä") 'ace-jump-mode))
 
 ;; jump to first error in compile mode
 (setq compilation-scroll-output 'first-error)
@@ -355,6 +358,9 @@
   (setq dap-auto-configure-features '(sessions locals expressions controls tooltip))
   (setq dap-lldb-debug-program '("C:/Users/marku/wrk/llvm-project/build/bin/lldb-vscode.exe")))
 
+(setq-default explicit-shell-file-name "C:/Program Files/Git/bin/bash.exe")
+(setq-default shell-file-name "C:/Program Files/Git/bin/bash.exe")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -367,3 +373,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(tooltip ((t (:inherit default :background "#282828" :foreground "white")))))
+
